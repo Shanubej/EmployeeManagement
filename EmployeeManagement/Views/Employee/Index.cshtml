@@ -1,0 +1,169 @@
+﻿@model EmployeeModel
+@{
+    Layout = "/Views/_employee.cshtml";
+}
+<div class="row">
+    <h3>Add Employee</h3>
+    <form id="employeeForm" asp-action="SaveEmployee" asp-controller="Employee" method="post" enctype="multipart/form-data">
+
+        <div class="row mt-4 form-group">
+            <div class="col form-floating">
+                <input id="inputFirstName" type="text" class="form-control" placeholder="First Name" aria-label="First Name" />
+                <label for="inputFirstName" class="form-label">First Name</label>
+            </div>
+            <div class="col form-floating">
+                <input id="inputLastName" type="text" class="form-control" placeholder="Last Name" aria-label="Last Name" />
+                <label for="inputLastName" class="form-label">Last Name</label>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col form-floating">
+                <input id="inputDOB" type="text" class="form-control datepicker" placeholder="DOB" aria-label="Date of Birth" />
+                <label for="inputDOB" class="form-label">DOB</label>
+            </div>
+            <div class="col form-floating">
+                <select id="inputGender" class="form-control">
+                    <option value=""> -- Select --</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <label for="inputGender" class="form-label">Gender</label>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col form-floating">
+                <input id="inputEmail" type="text" class="form-control" placeholder="Email" aria-label="Email" />
+                <label for="inputEmail" class="form-label">Email</label>
+            </div>
+            <div class="col form-floating">
+                <input id="inputMobile" type="text" class="form-control" placeholder="Mobile Number" aria-label="Mobile Number" />
+                <label for="inputMobile" class="form-label">Mobile Number</label>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col form-floating">
+                <input id="inputDesignation" type="text" class="form-control" placeholder="Designation" aria-label="Designation" />
+                <label for="inputDesignation" class="form-label">Designation</label>
+            </div>
+            <div class="col form-floating">
+                <input id="inputSalary" type="text" class="form-control" placeholder="Salary" aria-label="Salary" />
+                <label for="inputSalary">Salary</label>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col form-floating">
+                <input id="inputAddress" type="text" class="form-control" placeholder="Address" aria-label="Address" />
+                <label for="inputAddress">Address</label>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col" style="text-align:center;">
+                <button @* onclick="AddEmployee()" *@ type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".datepicker").datepicker({
+            format: 'dd-mm-yyyy',
+            autoclose: true,
+            orientation: "bottom auto"
+        });
+
+        $("#employeeForm").submit(function (event) {
+            event.preventDefault();
+        });
+    });
+
+    $("#employeeForm").submit(function (event) {
+        event.preventDefault();
+
+        var regex = /^[a-zA-Z]+$/;
+        var emailPattern = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        var firstName = $("#inputFirstName").val();
+        var lastName = $("#inputLastName").val();
+        var email = $("#inputEmail").val();
+        var Mobile = $("#inputMobile").val();
+        var Address = $("#inputAddress").val();
+        var DOB = $("#inputDOB").val();
+        var Gender = $("#inputGender").val();
+        var Designation = $("#inputDesignation").val();
+        var Salary = $("#inputSalary").val();
+        var DOJ = "";
+
+        if (!firstName) {
+            alert("Please enter first name");
+            $("#inputFirstName").focus();
+            return;
+        }
+        else if (!regex.test(firstName)) {
+            alert("No special character allowed");
+            $("#inputFirstName").focus();
+            return;
+        }
+
+        if (!lastName) {
+            alert("Please enter last name");
+            $("#inputLastName").focus();
+            return;
+        }
+        else if (!regex.test(lastName)) {
+            alert("No special character allowed");
+            $("#inputLastName").focus();
+            return;
+        }
+
+        if (!email) {
+            alert("Please enter Email")
+            return;
+        }
+        else if (!emailPattern.test(email)) {
+            alert("Please enter correct Email")
+            return;
+        }
+
+        var employeeData = {
+
+            Id: 0,
+            FirstName: $("#inputFirstName").val(),
+            LastName: $("#inputLastName").val(),
+            Email: $("#inputEmail").val(),
+            Mobile: $("#inputMobile").val(),
+            Address: $("#inputAddress").val(),
+            //DOB: $("#inputDOB").val(),
+            DOB: "2024-05-01",
+            Gender: $("#inputGender").val(),
+            Designation: $("#inputDesignation").val(),
+            Salary: parseFloat($("#inputSalary").val()),
+            DOJ: "2024-05-01"
+        }; 
+
+        var formAction = $(this).attr("action");
+
+        $.ajax({
+            method: 'POST',
+            url: formAction,
+            data: JSON.stringify(employeeData),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                alert("Saved successfully: " + response.message);
+                $("#employeeForm")[0].reset();
+            },
+            error: function (xhr, status, error) {
+                alert("Error: " + xhr.responseText);
+            }
+        });
+
+    });
+
+
+</script>
