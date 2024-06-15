@@ -8,21 +8,22 @@
 
         <div class="row mt-4 form-group">
             <div class="col form-floating">
-                <input id="inputFirstName" type="text" class="form-control" placeholder="First Name" aria-label="First Name" />
+                <input id="EmpId" type="hidden" asp-for="Id" />
+                <input id="inputFirstName" type="text" asp-for="FirstName" class="form-control" placeholder="First Name" aria-label="First Name" />
                 <label for="inputFirstName" class="form-label">First Name</label>
             </div>
             <div class="col form-floating">
-                <input id="inputLastName" type="text" class="form-control" placeholder="Last Name" aria-label="Last Name" />
+                <input id="inputLastName" type="text" asp-for="LastName" class="form-control" placeholder="Last Name" aria-label="Last Name" />
                 <label for="inputLastName" class="form-label">Last Name</label>
             </div>
         </div>
         <div class="row mt-4">
             <div class="col form-floating">
-                <input id="inputDOB" type="text" class="form-control datepicker" placeholder="DOB" aria-label="Date of Birth" />
+                <input id="inputDOB" type="date" asp-for="DOB" class="form-control" placeholder="DOB" aria-label="Date of Birth" onchange="check(this)" />
                 <label for="inputDOB" class="form-label">DOB</label>
             </div>
             <div class="col form-floating">
-                <select id="inputGender" class="form-control">
+                <select id="inputGender" asp-for="Gender" class="form-control">
                     <option value=""> -- Select --</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -34,28 +35,28 @@
 
         <div class="row mt-4">
             <div class="col form-floating">
-                <input id="inputEmail" type="text" class="form-control" placeholder="Email" aria-label="Email" />
+                <input id="inputEmail" type="text" asp-for="Email" class="form-control" placeholder="Email" aria-label="Email" />
                 <label for="inputEmail" class="form-label">Email</label>
             </div>
             <div class="col form-floating">
-                <input id="inputMobile" type="text" class="form-control" placeholder="Mobile Number" aria-label="Mobile Number" />
+                <input id="inputMobile" type="text" asp-for="Mobile" class="form-control" placeholder="Mobile Number" aria-label="Mobile Number" />
                 <label for="inputMobile" class="form-label">Mobile Number</label>
             </div>
         </div>
 
         <div class="row mt-4">
             <div class="col form-floating">
-                <input id="inputDesignation" type="text" class="form-control" placeholder="Designation" aria-label="Designation" />
+                <input id="inputDesignation" type="text" asp-for="Designation" class="form-control" placeholder="Designation" aria-label="Designation" />
                 <label for="inputDesignation" class="form-label">Designation</label>
             </div>
             <div class="col form-floating">
-                <input id="inputSalary" type="text" class="form-control" placeholder="Salary" aria-label="Salary" />
-                <label for="inputSalary">Salary</label>
+                <input id="inputDOJ" type="date" asp-for="DOJ" class="form-control" placeholder="Date of joining" aria-label="DOJ" />
+                <label for="inputDOJ">DOJ</label>
             </div>
         </div>
         <div class="row mt-4">
             <div class="col form-floating">
-                <input id="inputAddress" type="text" class="form-control" placeholder="Address" aria-label="Address" />
+                <input id="inputAddress" type="text" asp-for="Address" class="form-control" placeholder="Address" aria-label="Address" />
                 <label for="inputAddress">Address</label>
             </div>
         </div>
@@ -67,20 +68,37 @@
         </div>
     </form>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@* <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script> *@
 <script>
     $(document).ready(function () {
-        $(".datepicker").datepicker({
-            format: 'dd-mm-yyyy',
-            autoclose: true,
-            orientation: "bottom auto"
-        });
+        // $(".datepicker").datepicker({
+        //     format: 'dd-mm-yyyy',
+        //     autoclose: true,
+        //     orientation: "bottom auto"
+        // });
 
         $("#employeeForm").submit(function (event) {
             event.preventDefault();
         });
     });
+
+    function check() {
+        debugger;
+        var dob = new Date($("#inputDOB").val());
+        var now = new Date();
+        var age = now.getFullYear() - dob.getFullYear();
+        var monthDiff = now.getMonth() - dob.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        if (age < 18 || age > 60) {
+            alert('Age must be between 18 and 60 years.');
+            $("#inputDOB").val('');
+        }
+    }
 
     $("#employeeForm").submit(function (event) {
         event.preventDefault();
@@ -96,8 +114,7 @@
         var DOB = $("#inputDOB").val();
         var Gender = $("#inputGender").val();
         var Designation = $("#inputDesignation").val();
-        var Salary = $("#inputSalary").val();
-        var DOJ = "";
+        var DOJ = $("#inputDOJ").val();
 
         if (!firstName) {
             alert("Please enter first name");
@@ -132,18 +149,16 @@
 
         var employeeData = {
 
-            Id: 0,
-            FirstName: $("#inputFirstName").val(),
-            LastName: $("#inputLastName").val(),
-            Email: $("#inputEmail").val(),
-            Mobile: $("#inputMobile").val(),
-            Address: $("#inputAddress").val(),
-            //DOB: $("#inputDOB").val(),
-            DOB: "2024-05-01",
-            Gender: $("#inputGender").val(),
-            Designation: $("#inputDesignation").val(),
-            Salary: parseFloat($("#inputSalary").val()),
-            DOJ: "2024-05-01"
+            Id: $("#EmpId").val(),
+            FirstName: firstName,
+            LastName: lastName,
+            Email: email,
+            Mobile: Mobile,
+            Address: Address,
+            DOB: DOB,
+            Gender: Gender,
+            Designation: Designation,
+            DOJ: DOJ
         }; 
 
         var formAction = $(this).attr("action");
@@ -151,9 +166,7 @@
         $.ajax({
             method: 'POST',
             url: formAction,
-            data: JSON.stringify(employeeData),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
+            data: employeeData ,
             success: function (response) {
                 alert("Saved successfully: " + response.message);
                 $("#employeeForm")[0].reset();
